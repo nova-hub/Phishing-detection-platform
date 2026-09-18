@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
 type ScanHistory = {
@@ -219,14 +220,23 @@ export default function Home() {
     <main className="min-h-screen bg-slate-900 text-white p-8">
 
       {/* TOP BAR */}
-      <div className="w-full max-w-5xl mx-auto flex justify-end mb-6">
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-500 text-white font-semibold px-5 py-2 rounded-lg transition"
-        >
-          Logout
-        </button>
-      </div>
+      <div className="w-full max-w-5xl mx-auto flex justify-between items-center mb-6">
+
+  <Link
+    href="/offboarding"
+    className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-5 py-2 rounded-lg transition"
+  >
+    👤 Employee Offboarding
+  </Link>
+
+  <button
+    onClick={handleLogout}
+    className="bg-red-600 hover:bg-red-500 text-white font-semibold px-5 py-2 rounded-lg transition"
+  >
+    Logout
+  </button>
+
+</div>
 
       {/* HEADER */}
       <div className="max-w-5xl mx-auto text-center mb-10">
