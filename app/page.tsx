@@ -26,6 +26,7 @@ export default function Home() {
   const [history, setHistory] = useState<ScanHistory[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // =========================
   // LOGOUT
@@ -36,24 +37,35 @@ export default function Home() {
   };
 
   // =========================
-  // CHECK LOGIN
-  // =========================
-  useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+// CHECK LOGIN + ADMIN ROLE
+// =========================
+useEffect(() => {
+  const checkUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-      if (!user) {
-        window.location.href = '/login';
-        return;
-      }
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
 
-      setAuthLoading(false);
-    };
+    // Check admin role
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
 
-    checkUser();
-  }, []);
+    if (profile?.role === 'admin') {
+      setIsAdmin(true);
+    }
+
+    setAuthLoading(false);
+  };
+
+  checkUser();
+}, []);
 
   const fetchHistory = async () => {
   try {
@@ -219,15 +231,28 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-900 text-white p-8">
 
-      {/* TOP BAR */}
-      <div className="w-full max-w-5xl mx-auto flex justify-between items-center mb-6">
+    {/* TOP BAR */}
+<div className="w-full max-w-5xl mx-auto flex justify-between items-center mb-6">
 
-  <Link
-    href="/offboarding"
-    className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-5 py-2 rounded-lg transition"
-  >
-    👤 Employee Offboarding
-  </Link>
+  <div className="flex gap-3">
+
+    <Link
+      href="/offboarding"
+      className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-5 py-2 rounded-lg transition"
+    >
+      👤 Employee Offboarding
+    </Link>
+
+    {isAdmin && (
+      <Link
+        href="/admin"
+        className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2 rounded-lg transition"
+      >
+        🛡️ Admin Panel
+      </Link>
+    )}
+
+  </div>
 
   <button
     onClick={handleLogout}
